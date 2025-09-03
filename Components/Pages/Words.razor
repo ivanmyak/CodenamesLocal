@@ -1,0 +1,47 @@
+﻿@page "/words"
+@rendermode InteractiveServer
+@inject IWordBank WordBank
+
+<h3>Словари</h3>
+
+<select @onchange="async e => await LoadWords(((ChangeEventArgs)e).Value?.ToString())">
+    <option value="ru">Русский</option>
+    <option value="en">English</option>
+</select>
+
+
+
+@if (words == null)
+{
+    <em>Загрузка...</em>
+}
+else if (words.Count == 0)
+{
+    <em>Слов нет</em>
+}
+else
+{
+    <p>Слов в выбранном словаре: @words.Count</p>
+    <ul>
+        @for (var i = 0; i < words.Count; i++)
+        {
+            <li>@(i + 1). @words[i]</li>
+        }
+    </ul>
+}
+
+@code {
+    IReadOnlyList<string> words;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWords("ru");
+    }
+
+    async Task LoadWords(string? lang)
+    {
+        if (string.IsNullOrEmpty(lang)) return;
+
+        words = await WordBank.LoadAsync(lang);
+    }
+}
