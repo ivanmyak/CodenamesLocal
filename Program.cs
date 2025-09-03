@@ -9,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<IWordBank, WordBank>();
+builder.Services.AddScoped<GameService>();
 
 
 var app = builder.Build();
