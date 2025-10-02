@@ -1,0 +1,43 @@
+﻿@page "/room/{RoomId}"
+@rendermode InteractiveServer
+@inject GameService Game
+
+<h3>Комната: @RoomId</h3>
+
+@if (room is null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+    <p>Режим: @room.Mode</p>
+    <div class="board">
+        @foreach (var card in room.Board.Cards.Select((c, i) => new { Card = c, Index = i }))
+        {
+            <button class="card @card.Card.Revealed" @onclick="() => Guess(card.Index)">
+                @card.Card.Word
+            </button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public string RoomId { get; set; } = "";
+    private Room? room;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Game.RoomStateChanged += r =>
+        {
+            room = r;
+            StateHasChanged();
+        };
+
+        await Game.JoinRoomAsync(RoomId, "Игрок", Team.Red, false);
+    }
+
+    private async Task Guess(int index)
+    {
+        await Game.GuessAsync(RoomId, index);
+    }
+}

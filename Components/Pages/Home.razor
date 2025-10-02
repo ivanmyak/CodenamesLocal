@@ -1,7 +1,79 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject GameService Game
 
-<PageTitle>Home</PageTitle>
+<h3>Лобби</h3>
 
-<h1>Hello, world!</h1>
+<div class="mb-3">
+    <label>Имя игрока:</label>
+    <input @bind="playerName" />
+</div>
 
-Welcome to your new app.
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-warning">@errorMessage</div>
+}
+
+<div class="mb-3">
+    <label>Режим игры:</label>
+    <select @bind="selectedMode">
+        <option value="Classic">Классика</option>
+        <option value="Duet">Дуэт</option>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label>Язык слов:</label>
+    <select @bind="selectedLang">
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+    </select>
+</div>
+
+<button @onclick="CreateRoom">Создать комнату</button>
+
+<div class="mt-4">
+    <label>ID комнаты:</label>
+    <input @bind="roomId" />
+    <button @onclick="JoinRoom">Присоединиться</button>
+</div>
+
+@code {
+    private string playerName = "";
+    private string selectedMode = "Classic";
+    private string selectedLang = "ru";
+    private string roomId = "";
+    private string? errorMessage;
+
+    private async Task CreateRoom()
+    {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            errorMessage = "Введите имя игрока, чтобы создать комнату.";
+            return;
+        }
+
+        errorMessage = null;
+        var id = await Game.CreateRoomAsync(Enum.Parse<CodenamesClean.Enums.GameMode>(selectedMode), selectedLang);
+        Navigation.NavigateTo($"/room/{id}?player={Uri.EscapeDataString(playerName)}");
+    }
+
+    private async Task JoinRoom()
+    {
+        if (string.IsNullOrWhiteSpace(playerName))
+        {
+            errorMessage = "Введите имя игрока, чтобы присоединиться.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(roomId))
+        {
+            errorMessage = "Введите ID комнаты.";
+            return;
+        }
+
+        errorMessage = null;
+        Navigation.NavigateTo($"/room/{roomId}?player={Uri.EscapeDataString(playerName)}");
+    }
+}
