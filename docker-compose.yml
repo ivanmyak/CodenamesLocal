@@ -1,0 +1,12 @@
+services:
+  codenamesclean:
+    image: ${DOCKER_REGISTRY-}codenamesclean
+    build:
+      context: .
+      dockerfile: KTCNamesLocal/Dockerfile
+    environment:
+      - ASPNETCORE_HTTP_PORTS=5251
+      # - ASPNETCORE_HTTPS_PORTS=5252
+    ports:
+      - "5251:5251"
+      # - "5252:5252"

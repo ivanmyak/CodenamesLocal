@@ -1,5 +1,6 @@
 using CodenamesClean.Abstracts;
 using CodenamesClean.Components;
+using CodenamesClean.Hubs;
 using CodenamesClean.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<IWordBank, WordBank>();
+builder.Services.AddSingleton<IRoomStore, MemoryRoomStore>();
 builder.Services.AddScoped<GameService>();
 
 
@@ -30,5 +32,7 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapHub<GameHub>("/hub/game");
 
 app.Run();

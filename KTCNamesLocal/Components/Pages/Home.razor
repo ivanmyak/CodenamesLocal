@@ -55,6 +55,7 @@
         }
 
         errorMessage = null;
+
         var id = await Game.CreateRoomAsync(Enum.Parse<CodenamesClean.Enums.GameMode>(selectedMode), selectedLang);
         Navigation.NavigateTo($"/room/{id}?player={Uri.EscapeDataString(playerName)}");
     }

@@ -1,0 +1,12 @@
+services:
+  codenamesclean:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=7261
+      # - ASPNETCORE_HTTPS_PORTS=7262
+    ports:
+      - "7261:7261"
+      # - "7262:7262"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
