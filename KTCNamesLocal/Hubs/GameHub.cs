@@ -26,9 +26,14 @@ namespace CodenamesClean.Hubs
 
         public async Task<string> CreateRoom(CreateArgs args)
         {
-            var roomId = RoomId.New();
+            //var roomId = RoomId.New(args.Lang);
             var seed = Convert.ToHexString(RandomNumberGenerator.GetBytes(8)).ToLowerInvariant();
             var words = await _bank.LoadAsync(args.Lang);
+            var adjectives = await _bank.LoadAsync(args.Lang, StringForma.Adjectives);
+            var nouns = await _bank.LoadAsync(args.Lang, StringForma.Nouns);
+            Random random = new Random();
+
+            var roomId = $"{adjectives[random.Next(adjectives.Count)]}_{nouns[random.Next(nouns.Count)]}";
 
             var board = args.Mode switch
             {
@@ -42,7 +47,8 @@ namespace CodenamesClean.Hubs
                 Id = roomId,
                 Mode = args.Mode,
                 Board = board,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                CreatorConnectionId = Context.ConnectionId
             };
 
             await _rooms.TryAddAsync(room);
@@ -58,8 +64,8 @@ namespace CodenamesClean.Hubs
             {
                 Id = Context.ConnectionId,
                 Name = args.PlayerName,
-                Team = args.Team,
-                IsSpymaster = args.IsSpymaster
+                Team = null,
+                IsSpymaster = false,
             };
 
             await Clients.Caller.SendAsync("RoomState", room);

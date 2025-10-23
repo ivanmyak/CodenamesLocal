@@ -11,6 +11,7 @@
 else
 {
     <p>Режим: @room.Mode</p>
+    <p>игроки (@room.Players.Count)шт.: @string.Join("\n", room.Players.Select(pl => $"{pl.Value.Name}:{pl.Value.Team}"))</p>
     <div class="board">
         @foreach (var card in room.Board.Cards.Select((c, i) => new { Card = c, Index = i }))
         {

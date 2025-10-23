@@ -9,7 +9,7 @@ namespace CodenamesClean.Models
         public required GameMode Mode { get; init; }
         public required Board Board { get; set; }
         public required DateTime CreatedAt { get; init; }
-        public string? PasswordHash { get; init; } // задел на защиту комнаты
+        public string CreatorConnectionId { get; set; } = ""; // Ключ Owner-а
         public bool Finished { get; set; }
 
         // Classic: чей ход (Red/Blue)

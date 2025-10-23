@@ -10,12 +10,22 @@ namespace CodenamesClean.Services
 
         public WordBank(IWebHostEnvironment env) => _env = env;
 
-        public async Task<IReadOnlyList<string>> LoadAsync(string lang, CancellationToken ct = default)
+        public async Task<IReadOnlyList<string>> LoadAsync(string lang = "ru", Enums.StringForma stringForma = Enums.StringForma.Words, CancellationToken ct = default)
         {
-            if (_cache.TryGetValue(lang, out var cached)) return cached;
+            if (_cache.TryGetValue(stringForma.ToString(), out var cached)) return cached;
 
-            var basePath = Path.Combine(_env.WebRootPath ?? "wwwroot", "lang", $"words-{lang}.txt");
-            var customPath = Path.Combine(_env.WebRootPath ?? "wwwroot", "lang", $"custom-{lang}.txt");
+            string? basePath = "", customPath = "";
+
+            switch (stringForma)
+            {
+                case Enums.StringForma.Words:
+                    basePath = Path.Combine(_env.WebRootPath ?? "wwwroot", "lang", $"words-{lang}.txt");
+                    customPath = Path.Combine(_env.WebRootPath ?? "wwwroot", "lang", $"custom-{lang}.txt");
+                    break;
+                default:
+                    basePath = Path.Combine(_env.WebRootPath ?? "wwwroot", "lang", $"{stringForma.ToString().ToLower()}-{lang}.txt");
+                    break;
+            }
 
             var words = new List<string>();
             if (File.Exists(basePath))
@@ -30,7 +40,7 @@ namespace CodenamesClean.Services
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
-            _cache[lang] = norm;
+            _cache[stringForma.ToString()] = norm;
             return norm;
         }
         public async Task AddWordsAsync(string lang, IEnumerable<string> words, CancellationToken ct = default)
