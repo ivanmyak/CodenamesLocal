@@ -64,8 +64,6 @@ namespace CodenamesClean.Hubs
             {
                 Id = Context.ConnectionId,
                 Name = args.PlayerName,
-                Team = null,
-                IsSpymaster = false,
             };
 
             await Clients.Caller.SendAsync("RoomState", room);
